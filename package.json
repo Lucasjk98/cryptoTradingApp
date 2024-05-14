@@ -1,0 +1,21 @@
+{
+  "name": "tradingapp",
+  "version": "1.0.0",
+  "workspaces": ["packages/*", "apps/*"],
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lucasjk98/tradingApp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lucasjk98/tradingApp/issues"
+  },
+  "homepage": "https://github.com/Lucasjk98/tradingApp#readme"
+}
