@@ -1,1 +1,1 @@
-# tradingApp
+# tradingAppExpo
