@@ -1,7 +1,8 @@
 {
   "devDependencies": {
     "esbuild": "^0.14.25",
-    "serverless-esbuild": "^1.25.0"
+    "serverless-esbuild": "^1.25.0",
+    "serverless-offline": "^13.5.0"
   },
   "name": "services"
 }
