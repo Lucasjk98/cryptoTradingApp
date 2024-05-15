@@ -4,3 +4,6 @@ node_modules
 
 # Serverless directories
 .serverless
+
+#ENV files 
+.env
