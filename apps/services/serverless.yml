@@ -12,7 +12,7 @@ provider:
 functions:
   api:
     handler: app.handler
-  events:
+    events:
     - httpApi: '*'
 
 plugins:
