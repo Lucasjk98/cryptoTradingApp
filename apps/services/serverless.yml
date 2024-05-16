@@ -1,0 +1,20 @@
+org: ljimen1
+app: services
+service: services
+frameworkVersion: '3'
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  
+
+functions:
+  api:
+    handler: app.handler
+    events:
+    - httpApi: '*'
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline

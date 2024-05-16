@@ -1,0 +1,9 @@
+# package directories
+node_modules
+.esbuild
+
+# Serverless directories
+.serverless
+
+#ENV files 
+.env
