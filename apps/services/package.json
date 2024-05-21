@@ -7,6 +7,7 @@
   "name": "services",
   "dependencies": {
     "express": "^4.19.2",
+    "mongodb": "^6.6.2",
     "serverless-http": "^3.2.0"
   }
 }

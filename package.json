@@ -1,7 +1,10 @@
 {
   "name": "trading-app",
   "version": "1.0.0",
-  "workspaces": ["packages/*", "apps/*"],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/Lucasjk98/tradingApp/issues"
   },
-  "homepage": "https://github.com/Lucasjk98/tradingApp#readme"
+  "homepage": "https://github.com/Lucasjk98/tradingApp#readme",
+  "dependencies": {
+    "mongoose": "^8.4.0"
+  }
 }
