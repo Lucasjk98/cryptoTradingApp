@@ -20,8 +20,8 @@ app.get('/', async (req, res) => {
 
 
 
-
 app.post('/users', async (req, res) => {
+  console.log("Received request on /users");
   try {
     await connectToDatabase();
     const user = new User(req.body);
@@ -31,6 +31,7 @@ app.post('/users', async (req, res) => {
     res.status(400).send(error.message);
   }
 });
+
 
 
 module.exports.handler = serverless(app);
