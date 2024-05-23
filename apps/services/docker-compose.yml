@@ -9,6 +9,5 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: appuserpass
     volumes:
       - mongo-data:/data/db
-
 volumes:
   mongo-data:
