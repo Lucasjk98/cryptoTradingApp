@@ -2,6 +2,7 @@ version: '3.8'
 services:
   mongodb:
     image: mongo
+    tty: true
     ports:
       - "27017:27017"
     environment:
