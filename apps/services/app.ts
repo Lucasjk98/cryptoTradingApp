@@ -1,8 +1,9 @@
-const express = require('express');
-const serverless = require('serverless-http');
-const connectToDatabase = require('./config/database'); // Import your database connection
-const User = require('./models/User');
-require('dotenv').config();
+import 'dotenv/config';
+
+import express from 'express';
+import serverless from 'serverless-http'
+import { connectToDatabase } from './config/database'
+import { User } from './models/User'
 
 const app = express();
 
@@ -24,9 +25,9 @@ app.post('/users', async (req, res) => {
         const user = new User(req.body);
         const savedUser = await user.save();
         res.status(201).send(savedUser);
-    } catch (error) {
+    } catch (error: any) {
         res.status(400).send(error.message);
     }
 });
 
-module.exports.handler = serverless(app);
+export const handler = serverless(app);

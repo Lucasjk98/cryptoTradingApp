@@ -2,17 +2,18 @@
   "name": "@trading-app/services",
   "scripts": {
     "start:dev": "serverless offline"
-
   },
   "dependencies": {
     "express": "^4.19.2",
     "mongodb": "^6.6.2",
-    "serverless-http": "^3.2.0",
-    "mongoose": "^8.4.0"
+    "mongoose": "^8.4.0",
+    "serverless-http": "^3.2.0"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "esbuild": "^0.14.25",
     "serverless-esbuild": "^1.25.0",
-    "serverless-offline": "^13.5.0"
+    "serverless-offline": "^13.5.0",
+    "typescript": "^5.4.5"
   }
 }
