@@ -1,11 +1,14 @@
 {
   "name": "trading-app",
   "version": "1.0.0",
-  "workspaces": ["packages/*", "apps/*"],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:dev": "concurrently \"npm run start:mongo\" \"npm run start:dev --workspace=@trading-app/services\" \"npm run start:dev --workspace=@trading-app/frontend\" -n mongo,services,frontend -c green,yellow,blue",
+    "start:mongo": "docker compose run --service-ports mongodb"
   },
   "repository": {
     "type": "git",
@@ -14,8 +17,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Lucasjk98/tradingApp/issues"
-  },
-  "homepage": "https://github.com/Lucasjk98/tradingApp#readme"
+  "homepage": "https://github.com/Lucasjk98/tradingApp#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
 }
