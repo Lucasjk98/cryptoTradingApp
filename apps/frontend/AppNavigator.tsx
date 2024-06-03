@@ -8,14 +8,15 @@ import StockScreen from './screens/StockScreen';
 import PortfolioScreen from './screens/PortfolioScreen';
 import TransactionsScreen from './screens/TransactionScreen';
 import LeaderboardScreen from './screens/LeaderboardScreen';
+import GuideScreen from './screens/GuideScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 function ProfileStack() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="ProfileMain" component={ProfileScreen} />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Transactions" component={TransactionsScreen} />
       <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
     </Stack.Navigator>
@@ -30,6 +31,7 @@ export default function App() {
         <Tab.Screen name="Profile" component={ProfileStack} />
         <Tab.Screen name="Stock" component={StockScreen} />
         <Tab.Screen name="Portfolio" component={PortfolioScreen} />
+        <Tab.Screen name="UserGuide" component={GuideScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

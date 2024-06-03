@@ -1,28 +1,38 @@
 import React from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function ProfileScreen() {
-  const navigation = useNavigation();
 
+const ProfileScreen = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>Profile</Text>
+      <Text>Account Information:</Text>
       <Button
-        title="Go to Transactions"
+        title="View Transactions"
         onPress={() => navigation.navigate('Transactions')}
       />
       <Button
-        title="Go to Leaderboard"
+        title="View Leaderboard"
         onPress={() => navigation.navigate('Leaderboard')}
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 16,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
   },
 });
+
+export default ProfileScreen;

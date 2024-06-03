@@ -1,12 +1,11 @@
-// src/screens/TransactionScreen.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const TransactionScreen = () => {
+const TransactionsScreen = () => {
   return (
     <View style={styles.container}>
-      <Text>Transaction Screen</Text>
-      {/* Add your transaction list or details here */}
+      <Text style={styles.header}>Transactions</Text>
+      <Text>Past Transactions will be listed here.</Text>
     </View>
   );
 };
@@ -16,7 +15,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 16,
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
   },
 });
 
-export default TransactionScreen;
+export default TransactionsScreen;

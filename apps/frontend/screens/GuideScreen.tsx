@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const LeaderboardScreen = () => {
+const GuideScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Leaderboard</Text>
-      <Text>Leaderboard will be displayed here.</Text>
+      <Text style={styles.header}>Guide</Text>
+      <Text>Welcome to the Paper Trading App!</Text>
+      <Text>This guide will help you navigate and use the app:</Text>
     </View>
   );
 };
@@ -24,4 +25,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LeaderboardScreen;
+export default GuideScreen;
