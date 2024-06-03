@@ -4,10 +4,14 @@ import express from 'express';
 import serverless from 'serverless-http'
 import { connectToDatabase } from './config/database'
 import { User } from './models/User'
+import cryptoRoutes from './routes/cryptoRoutes';
+
+
 
 const app = express();
 
 app.use(express.json());
+app.use('/api/crypto', cryptoRoutes);
 
 app.get('/', async (req, res) => {
     try {
