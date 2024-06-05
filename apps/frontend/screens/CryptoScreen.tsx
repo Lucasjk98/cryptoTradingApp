@@ -13,6 +13,12 @@ const CryptoScreen = () => {
 
   useEffect(() => {
     fetchAndCacheCryptoData();
+    
+    const intervalId = setInterval(() => {
+    fetchAndCacheCryptoData();
+  }, 60000); 
+
+  return () => clearInterval(intervalId); // Cleanup the interval on component unmount
   }, []);
 
   const fetchAndCacheCryptoData = async () => {
