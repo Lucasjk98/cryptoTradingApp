@@ -4,6 +4,23 @@ const api = axios.create({
   baseURL: 'https://api.coingecko.com/api/v3',
 });
 
+const newsApi = axios.create({
+  baseURL: 'http://localhost:3002/api/crypto',
+});
+
+export const getCryptoNews = async (query: string) => {
+  try {
+    const response = await api.get('/news', {
+      params: {
+        currencies: query,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching crypto news:', error);
+    throw error;
+  }
+};
 // Function to get current price of a cryptocurrency
 export const getCryptoPrice = async (id: string): Promise<any> => {
   try {
