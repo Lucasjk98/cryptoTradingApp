@@ -7,7 +7,7 @@
   ],
   "description": "",
   "scripts": {
-    "start:dev": "concurrently \"npm run start:mongo\" \"npm run start:dev --workspace=@trading-app/services\" \"npm run start:dev --workspace=@trading-app/frontend\" -n mongo,services,frontend -c green,yellow,blue",
+    "start:dev": "concurrently \"npm run start:mongo\" \"npm run start:dev --workspace=@trading-app/services\" \"npm run start --workspace=@trading-app/frontend\" -n mongo,services,frontend -c green,yellow,blue",
     "start:mongo": "docker compose run --service-ports mongodb"
   },
   "repository": {
@@ -19,15 +19,18 @@
   "license": "ISC",
   "homepage": "https://github.com/Lucasjk98/tradingApp#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "concurrently": "^8.2.2"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
     "@react-navigation/stack": "^6.3.29",
     "axios": "^1.7.2",
+    "cors": "^2.8.5",
     "react-native-gesture-handler": "^2.16.2",
     "react-native-reanimated": "^3.11.0",
     "react-native-safe-area-context": "^4.10.1",

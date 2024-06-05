@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
-import StockScreen from './screens/StockScreen';
+import CryptoScreen from './screens/CryptoScreen';
 import PortfolioScreen from './screens/PortfolioScreen';
 import TransactionsScreen from './screens/TransactionScreen';
 import LeaderboardScreen from './screens/LeaderboardScreen';
@@ -29,7 +29,7 @@ export default function App() {
       <Tab.Navigator>
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Profile" component={ProfileStack} />
-        <Tab.Screen name="Stock" component={StockScreen} />
+        <Tab.Screen name="Crypto" component={CryptoScreen} />
         <Tab.Screen name="Portfolio" component={PortfolioScreen} />
         <Tab.Screen name="UserGuide" component={GuideScreen} />
       </Tab.Navigator>
