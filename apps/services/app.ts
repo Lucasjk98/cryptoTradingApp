@@ -8,10 +8,12 @@ import { User } from './models/User';
 import { Portfolio } from './models/Portfolio';
 import { Transaction } from './models/Transaction'
 import { connectToDatabase } from './config/database'
-import { User } from './models/User';
 import dotenv from 'dotenv';
 import axios from 'axios';
 import cryptoRoutes from './routes/cryptoRoutes';
+import userRoutes from './routes/userRoutes';
+import portfolioRoutes from './routes/portfolioRoutes';
+import transactionRoutes from './routes/transactionRoutes';
 
 
 
@@ -20,6 +22,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/api/crypto', cryptoRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 app.get('/api/crypto/news', async (req, res) => {
   const { currencies } = req.query;
