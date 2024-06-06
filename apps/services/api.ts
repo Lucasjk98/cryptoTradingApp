@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const api = axios.create({
-  baseURL: 'https://api.coingecko.com/api/v3',
+const backendApi = axios.create({
+  baseURL: 'http://localhost:3000/api',
 });
 
 const newsApi = axios.create({
@@ -21,45 +21,74 @@ export const getCryptoNews = async (query: string) => {
     throw error;
   }
 };
-// Function to get current price of a cryptocurrency
-export const getCryptoPrice = async (id: string): Promise<any> => {
+
+export const registerUser = async (username: string, password: string) => {
   try {
-    const response = await api.get('/simple/price', {
-      params: {
-        ids: id,
-        vs_currencies: 'usd',
-      },
+    const response = await backendApi.post('/users/register', {
+      username,
+      password,
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching crypto price:', error);
+    console.error('Error registering user:', error);
     throw error;
   }
 };
 
-// Function to get historical market data for a cryptocurrency
-export const getMarketData = async (id: string, days: number = 30): Promise<any> => {
+export const loginUser = async (username: string, password: string) => {
   try {
-    const response = await api.get(`/coins/${id}/market_chart`, {
-      params: {
-        vs_currency: 'usd',
-        days: days,
-      },
+    const response = await backendApi.post('/users/login', {
+      username,
+      password,
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching market data:', error);
+    console.error('Error logging in user:', error);
     throw error;
   }
 };
 
-// Function to get detailed information for a cryptocurrency
-export const getCryptoDetails = async (id: string): Promise<any> => {
+export const getUserData = async (id: string) => {
   try {
-    const response = await api.get(`/coins/${id}`);
+    const response = await backendApi.get(`/users/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching crypto details:', error);
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
+};
+
+export const addToPortfolio = async (userId: string, symbol: string, quantity: number, purchasePrice: number, type: 'buy' | 'sell') => {
+  try {
+    const response = await backendApi.post(`/portfolio/${userId}/portfolio`, {
+      symbol,
+      quantity,
+      purchasePrice,
+      type,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error adding to portfolio:', error);
+    throw error;
+  }
+};
+
+export const getPortfolio = async (userId: string) => {
+  try {
+    const response = await backendApi.get(`/portfolio/${userId}/portfolio`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching portfolio:', error);
+    throw error;
+  }
+};
+
+export const getTransactions = async (userId: string) => {
+  try {
+    const response = await backendApi.get(`/transactions/${userId}/transactions`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
     throw error;
   }
 };
