@@ -3,8 +3,11 @@ import 'dotenv/config';
 import express from 'express';
 import serverless from 'serverless-http'
 import cors from 'cors';
+import mongoose from 'mongoose';
 import { connectToDatabase } from './config/database'
 import { User } from './models/User';
+import { Portfolio } from './models/Portfolio';
+import { Transaction } from './models/Transaction';
 import dotenv from 'dotenv';
 import axios from 'axios';
 import cryptoRoutes from './routes/cryptoRoutes';
