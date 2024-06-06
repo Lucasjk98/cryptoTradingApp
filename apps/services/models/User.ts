@@ -1,10 +1,33 @@
-const mongoose = require('mongoose');
+import mongoose, { Schema, Document } from 'mongoose';
+import { IPortfolio } from './Portfolio';
+import { ITransaction } from './Transaction';
 
-const userSchema= new mongoose.Schema({
+export interface IUser extends Document {
+  username: string;
+  password: string;
+  portfolio: IPortfolio[];
+  transactions: ITransaction[];
+}
+
+const UserSchema: Schema = new Schema({
   username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
+  portfolio: [
+    {
+      symbol: { type: String, required: true },
+      quantity: { type: Number, required: true },
+      purchasePrice: { type: Number, required: true },
+    },
+  ],
+  transactions: [
+    {
+      symbol: { type: String, required: true },
+      type: { type: String, enum: ['buy', 'sell'], required: true },
+      quantity: { type: Number, required: true },
+      price: { type: Number, required: true },
+      date: { type: Date, default: Date.now },
+    },
+  ],
 });
 
-export const User = mongoose.model('User', userSchema);
+export const User = mongoose.model<IUser>('User', UserSchema);
