@@ -7,10 +7,11 @@ import { useAuth } from '../../services/AuthContext';
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const { logout } = useAuth();
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Profile</Text>
-      <Text>Account Information:</Text>
+      <Text style={styles.subHeader}>Account Information:</Text>
       <Button
         title="View Transactions"
         onPress={() => navigation.navigate('Transactions')}
@@ -34,6 +35,10 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  subHeader: {
+    fontSize: 18,
     marginBottom: 16,
   },
 });
