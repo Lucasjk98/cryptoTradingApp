@@ -15,6 +15,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
  const login = async (username: string, password: string) => {
@@ -24,7 +25,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     if (response && response.token) {
       setIsAuthenticated(true);
-      setUserId(response.user.id);  // Make sure the structure matches
+      setUserId(response.user.id); 
       await AsyncStorage.setItem('userId', response.user._id);
     } else {
       console.error('Invalid login response', response);

@@ -1,26 +1,65 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import axios from 'axios';
-import { useAuth } from '../../services/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const LOCAL_STORAGE_KEY = 'cryptoDataCache';
 
 const PortfolioScreen = () => {
   const [portfolioData, setPortfolioData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { userId } = useAuth();
+  const [userId, setUserId] = useState(null); // assuming you have a way to get userId
 
   useEffect(() => {
+    const fetchAndCacheCryptoData = async () => {
+      try {
+        const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
+          params: {
+            vs_currency: 'usd',
+            order: 'market_cap_desc',
+            per_page: 100,
+            page: 1,
+            sparkline: false,
+          },
+        });
+        await AsyncStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(response.data));
+      } catch (error) {
+        console.error('Error fetching and caching crypto data:', error);
+      }
+    };
+
     const fetchPortfolioData = async () => {
       try {
         const userId = await AsyncStorage.getItem('userId');
-        if (!userId) {
-          throw new Error('User ID not found in AsyncStorage');
-        }
-        else {
+        if (!userId) throw new Error('User ID not found in AsyncStorage');
+        
         const response = await axios.get(`http://localhost:3000/api/portfolio/${userId}/portfolio`);
-        setPortfolioData(response.data);
-        console.log(response.data);
-        }
+        const portfolioData = response.data;
+
+        // Fetch the cached crypto data
+        const cachedData = JSON.parse(await AsyncStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+
+        // Calculate gain/loss for each position
+        const positionsWithPrices = portfolioData.positions.map(position => {
+          const crypto = cachedData.find(crypto => crypto.symbol.toUpperCase() === position.symbol.toUpperCase());
+          const currentPrice = crypto ? crypto.current_price : 0;
+          const gainLoss = (currentPrice - position.purchasePrice) * position.quantity;
+          return {
+            ...position,
+            currentPrice,
+            gainLoss,
+          };
+        });
+
+        const totalGainLoss = positionsWithPrices.reduce((acc, position) => acc + position.gainLoss, 0);
+
+        // Update the portfolio data with calculated gain/loss
+        setPortfolioData({
+          ...portfolioData,
+          positions: positionsWithPrices,
+          totalGainLoss
+        });
+
       } catch (error) {
         console.error('Error fetching portfolio:', error);
       } finally {
@@ -28,6 +67,7 @@ const PortfolioScreen = () => {
       }
     };
 
+    fetchAndCacheCryptoData();
     fetchPortfolioData();
   }, [userId]);
 
@@ -58,7 +98,7 @@ const PortfolioScreen = () => {
           <Text>Symbol: {position.symbol}</Text>
           <Text>Quantity: {position.quantity}</Text>
           <Text>Purchase Price: ${position.purchasePrice}</Text>
-          <Text>Current Price: ${position.currentPrice}</Text> {/* Assuming you have this data */}
+          <Text>Current Price: ${position.currentPrice}</Text>
           <Text>Gain/Loss: ${position.gainLoss}</Text>
         </View>
       ))}
@@ -68,15 +108,14 @@ const PortfolioScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
+    padding: 20,
+    backgroundColor: 'white',
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    padding: 16,
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 10,
   },
 });
 
