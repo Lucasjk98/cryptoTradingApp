@@ -67,50 +67,6 @@ router.get('/:userId/portfolio', async (req, res) => {
   }
 });
 
-// Update a portfolio item for a user
-router.put('/:userId/portfolio/:portfolioItemId', async (req, res) => {
-    try {
-        const { userId, portfolioItemId } = req.params;
-        const { quantity } = req.body;
-
-        if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(portfolioItemId)) {
-            return res.status(400).json({ message: 'Invalid userId or portfolioItemId' });
-        }
-
-        const userObjectId = new mongoose.Types.ObjectId(userId);
-        const portfolioObjectId = new mongoose.Types.ObjectId(portfolioItemId);
-
-        // Find the portfolio item by ID
-        const portfolioItem = await Portfolio.findOne({ _id: portfolioObjectId, userId: userObjectId });
-
-        if (!portfolioItem) {
-            return res.status(404).json({ message: 'Portfolio item not found' });
-        }
-
-        // Update the quantity
-        portfolioItem.quantity += quantity;
-
-        // If quantity drops to zero or below, delete the portfolio item
-        if (portfolioItem.quantity <= 0) {
-            await Portfolio.deleteOne({ _id: portfolioObjectId });
-            return res.status(200).json({ message: 'Portfolio item deleted' });
-        }
-
-        // Save the updated portfolio item
-        await portfolioItem.save();
-
-        res.status(200).json({
-            message: 'Portfolio item updated successfully',
-            portfolioItem,
-        });
-    } catch (error) {
-        console.error('Error updating portfolio item:', error);
-        res.status(400).json({
-            message: 'Error updating portfolio item',
-            error: error.message || error,
-        });
-    }
-});
 
 // Add a new portfolio item for a user
 router.post('/:userId/portfolio', async (req, res) => {
@@ -129,6 +85,18 @@ router.post('/:userId/portfolio', async (req, res) => {
 
     // Find the portfolio item in the user's portfolio
     const portfolioItem = user.portfolio.find(item => item.symbol === symbol);
+
+    if (type === 'buy') {
+      const totalCost = purchasePrice * quantity;
+      if (user.totalCash < totalCost) {
+        return res.status(400).json({ message: 'Insufficient funds to complete the purchase' });
+      }
+      // Subtract the purchase price from the user's total cash
+      user.totalCash -= totalCost;
+    } else if (type === 'sell') {
+      // Add the sale price to the user's total cash
+      user.totalCash += purchasePrice * quantity;
+    }
 
     if (portfolioItem) {
       // Update the quantity if the portfolio item exists
