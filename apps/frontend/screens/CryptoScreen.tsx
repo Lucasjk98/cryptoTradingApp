@@ -16,7 +16,7 @@ const CryptoScreen = () => {
     
     const intervalId = setInterval(() => {
     fetchAndCacheCryptoData();
-  }, 60000); 
+  }, 90000); 
 
   return () => clearInterval(intervalId); // Cleanup the interval on component unmount
   }, []);
@@ -66,7 +66,7 @@ const CryptoScreen = () => {
   };
 
   return (
-  <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
     <View style={styles.container}>
       <TextInput
         style={styles.input}
