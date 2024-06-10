@@ -9,6 +9,8 @@ import PortfolioScreen from './screens/PortfolioScreen';
 import TransactionsScreen from './screens/TransactionScreen';
 import LeaderboardScreen from './screens/LeaderboardScreen';
 import GuideScreen from './screens/GuideScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import LoginScreen from './screens/LoginScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

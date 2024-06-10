@@ -53,7 +53,7 @@ const CryptoScreen = () => {
     try {
       const newsData = await getCryptoNews(searchQuery);
       console.log(newsData.data);
-      setCryptoNews(newsData.data);
+      setCryptoNews(newsData.results);
       console.log(cryptoNews);
     } catch (error) {
       console.error('Error fetching crypto news:', error);

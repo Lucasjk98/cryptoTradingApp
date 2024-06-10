@@ -5,12 +5,12 @@ const backendApi = axios.create({
 });
 
 const newsApi = axios.create({
-  baseURL: 'http://localhost:3002/api/crypto',
+  baseURL: 'http://localhost:3000/',
 });
 
 export const getCryptoNews = async (query: string) => {
   try {
-    const response = await api.get('/news', {
+    const response = await newsApi.get('/api/crypto/news', {
       params: {
         currencies: query,
       },

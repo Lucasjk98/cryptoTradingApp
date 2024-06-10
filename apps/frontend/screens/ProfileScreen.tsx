@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../services/AuthContext';
 
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
+  const { logout } = useAuth();
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Profile</Text>
@@ -17,6 +19,7 @@ const ProfileScreen = () => {
         title="View Leaderboard"
         onPress={() => navigation.navigate('Leaderboard')}
       />
+      <Button title="Logout" onPress={logout} />
     </View>
   );
 };

@@ -3,30 +3,65 @@ import { User } from '../models/User';
 import { Portfolio } from '../models/portfolio';
 import { Transaction } from '../models/Transaction';
 import mongoose from 'mongoose';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
 
 const router = express.Router();
 
 // Get user portfolio
 router.get('/:userId/portfolio', async (req, res) => {
-    try {
-        const userId = req.params.userId;
+  try {
+    const userId = req.params.userId;
 
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ message: 'Invalid userId' });
-        }
-        const objectId = new mongoose.Types.ObjectId(userId);
-
-        // Find portfolio items by userId
-        const portfolioItems = await Portfolio.find({ userId: objectId });
-
-        res.status(200).json(portfolioItems);
-    } catch (error) {
-        console.error('Error fetching portfolio:', error);
-        res.status(400).json({
-            message: 'Error fetching portfolio',
-            error: error.message || error,
-        });
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid userId' });
     }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const portfolioItems = user.portfolio || [];
+    const cryptoSymbols = portfolioItems.map(item => item.symbol).join(',');
+
+    const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
+      params: {
+        vs_currency: 'usd',
+        ids: cryptoSymbols,
+      },
+    });
+
+    const cryptoData = response.data;
+
+    const totalCash = user.totalCash;
+    const totalGainLoss = portfolioItems.reduce((acc, portfolioItem) => {
+      if (portfolioItem) {
+        const crypto = cryptoData.find(c => c.id === portfolioItem.symbol);
+        if (crypto) {
+          return acc + portfolioItem.quantity * (crypto.current_price - portfolioItem.purchasePrice);
+        }
+      }
+      return acc;
+    }, 0);
+
+    user.totalGainLoss = totalGainLoss;
+    await user.save();
+
+    res.status(200).json({
+      totalCash: user.totalCash,
+      totalGainLoss: user.totalGainLoss,
+      positions: user.portfolio,
+    });
+  } catch (error) {
+    console.error('Error fetching portfolio:', error);
+    res.status(400).json({
+      message: 'Error fetching portfolio',
+      error: error.message || error,
+    });
+  }
 });
 
 // Update a portfolio item for a user

@@ -1,11 +1,13 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { ITransaction } from './Transaction';
 import { IPortfolio } from './portfolio';
+import { ITransaction } from './Transaction';
 
 export interface IUser extends Document {
   username: string;
   password: string;
   portfolio: IPortfolio[];
+  totalCash: number;
+  totalGainLoss: number;
   transactions: ITransaction[];
 }
 
@@ -19,6 +21,8 @@ const UserSchema: Schema = new Schema({
       purchasePrice: { type: Number, required: true },
     },
   ],
+  totalCash: { type: Number, default: 50000 }, 
+  totalGainLoss: { type: Number, default: 0 },  
   transactions: [
     {
       symbol: { type: String, required: true },

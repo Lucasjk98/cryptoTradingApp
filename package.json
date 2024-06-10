@@ -22,6 +22,8 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/jsonwebtoken": "^9.0.6",
+    "@types/react": "^18.3.3",
+    "@types/react-native": "^0.73.0",
     "concurrently": "^8.2.2"
   },
   "dependencies": {

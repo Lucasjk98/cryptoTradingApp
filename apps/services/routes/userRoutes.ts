@@ -22,10 +22,11 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
+        console.log('Received login request:', username, password); // Add this line
         const user = await User.findOne({ username });
         if (user && await bcrypt.compare(password, user.password)) {
             const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
-            res.status(200).json({ message: 'Login successful', token });
+            res.status(200).json({ message: 'Login successful', token, user });
         } else {
             res.status(401).json({ message: 'Invalid username or password' });
         }
