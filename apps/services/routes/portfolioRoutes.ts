@@ -128,8 +128,8 @@ router.post('/:userId/portfolio', async (req, res) => {
     }
 
     // Find the portfolio item
-    const portfolioItem = await Portfolio.findOne({ userId: objectId, symbol });
-
+    const portfolioItem = user.portfolio.find(item => item.symbol === symbol);
+    
     if (portfolioItem) {
       // Update the quantity if the portfolio item exists
       portfolioItem.quantity += quantity;

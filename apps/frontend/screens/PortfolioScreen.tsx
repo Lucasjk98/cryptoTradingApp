@@ -19,6 +19,7 @@ const PortfolioScreen = () => {
         else {
         const response = await axios.get(`http://localhost:3000/api/portfolio/${userId}/portfolio`);
         setPortfolioData(response.data);
+        console.log(response.data);
         }
       } catch (error) {
         console.error('Error fetching portfolio:', error);
@@ -49,13 +50,15 @@ const PortfolioScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Portfolio</Text>
-      <Text>Current Stock Positions:</Text>
       <Text>Total Cash: ${portfolioData.totalCash}</Text>
       <Text>Total Gain/Loss: ${portfolioData.totalGainLoss}</Text>
+      <Text>Current Stock Positions:</Text>
       {portfolioData.positions.map((position, index) => (
         <View key={index}>
           <Text>Symbol: {position.symbol}</Text>
           <Text>Quantity: {position.quantity}</Text>
+          <Text>Purchase Price: ${position.purchasePrice}</Text>
+          <Text>Current Price: ${position.currentPrice}</Text> {/* Assuming you have this data */}
           <Text>Gain/Loss: ${position.gainLoss}</Text>
         </View>
       ))}
@@ -66,7 +69,7 @@ const PortfolioScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 16,
   },
