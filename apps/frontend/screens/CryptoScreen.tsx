@@ -3,13 +3,15 @@ import { View, Text, Button, TextInput, StyleSheet, Image, Linking, TouchableOpa
 import axios from 'axios';
 import { getCryptoNews } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { useAuth } from '../../services/AuthContext';
 const LOCAL_STORAGE_KEY = 'cryptoDataCache';
 
 const CryptoScreen = () => {
   const [cryptoData, setCryptoData] = useState<any>(null);
   const [cryptoNews, setCryptoNews] = useState<any>(null);
   const [query, setQuery] = useState<string>('bitcoin');
+  const [dollarAmount, setDollarAmount] = useState('');
+  const [cryptoAmount, setCryptoAmount] = useState('');
 
   useEffect(() => {
     fetchAndCacheCryptoData();
@@ -65,6 +67,36 @@ const CryptoScreen = () => {
     fetchCryptoNews(query);
   };
 
+  const handleTransaction = async (type) => {
+  console.log('initiate transaction');
+  const userId = await AsyncStorage.getItem('userId');
+  const symbol = cryptoData.symbol; 
+  const purchasePrice = cryptoData.current_price; 
+
+  let quantity = parseFloat(cryptoAmount);
+    if (!quantity && dollarAmount) {
+      quantity = parseFloat(dollarAmount) / purchasePrice;
+    }
+
+  try {
+    const response = await axios.post(`http://localhost:3000/api/portfolio/${userId}/portfolio`, {
+      symbol,
+      quantity,
+      purchasePrice,
+      type,
+    });
+
+    if (response.status === 200 || response.status === 201) {
+      alert('Transaction successful');
+    } else {
+      alert('Transaction failed');
+    }
+  } catch (error) {
+    console.error('Error making transaction:', error);
+    alert('Transaction failed');
+  }
+};
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
     <View style={styles.container}>
@@ -82,9 +114,23 @@ const CryptoScreen = () => {
           <Text>Market Cap: ${cryptoData.market_cap}</Text>
           <Text>24h High: ${cryptoData.high_24h}</Text>
           <Text>24h Low: ${cryptoData.low_24h}</Text>
+          <TextInput
+              style={styles.input}
+              placeholder="Enter amount in dollars"
+              value={dollarAmount}
+              onChangeText={(text) => setDollarAmount(text)}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Enter amount in crypto"
+              value={cryptoAmount}
+              onChangeText={(text) => setCryptoAmount(text)}
+              keyboardType="numeric"
+            />
           <View style={styles.buttonContainer}>
-            <Button title="Buy" onPress={() => {}} color="green" />
-            <Button title="Sell" onPress={() => {}} color="red" />
+            <Button title="Buy" onPress={() => {handleTransaction('buy')}} color="green" />
+            <Button title="Sell" onPress={() => {handleTransaction('sell')}} color="red" />
           </View>
           {cryptoNews && (
             <View style={styles.newsContainer}>
@@ -112,6 +158,12 @@ const CryptoScreen = () => {
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
   container: {
     padding: 20,
     backgroundColor: 'white',

@@ -93,7 +93,7 @@ const PortfolioScreen = () => {
         <Text style={styles.header}>Portfolio</Text>
         <View style={styles.infoContainer}>
           <View style={styles.row}>
-            <Text style={styles.title}>Total Cash: ${portfolioData.totalCash}</Text>
+            <Text style={styles.title}>Total Cash: ${portfolioData.totalCash.toFixed(2)}</Text>
             <Text style={[styles.title, styles.rightAligned]}>
               Total Gain/Loss: <Text style={portfolioData.totalGainLoss >= 0 ? styles.positive : styles.negative}>${portfolioData.totalGainLoss.toFixed(2)}</Text>
             </Text>
