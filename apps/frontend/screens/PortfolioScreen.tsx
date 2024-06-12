@@ -44,10 +44,12 @@ const PortfolioScreen = () => {
           const crypto = cachedData.find(crypto => crypto.symbol.toUpperCase() === position.symbol.toUpperCase());
           const currentPrice = crypto ? crypto.current_price : 0;
           const gainLoss = (currentPrice - position.purchasePrice) * position.quantity;
+          const currentValue = currentPrice * position.quantity;
           return {
             ...position,
             currentPrice,
             gainLoss,
+            currentValue,
           };
         });
 
@@ -98,14 +100,14 @@ const PortfolioScreen = () => {
               Total Gain/Loss: <Text style={portfolioData.totalGainLoss >= 0 ? styles.positive : styles.negative}>${portfolioData.totalGainLoss.toFixed(2)}</Text>
             </Text>
           </View>
-          <Text style={styles.sectionHeader}>Current Stock Positions:</Text>
+          <Text style={styles.sectionHeader}>Current Positions:</Text>
           {portfolioData.positions.map((position, index) => (
             <View key={index} style={styles.positionContainer}>
               <View style={styles.row}>
                 <Text style={styles.bold}>Symbol:</Text>
                 <Text>{position.symbol}</Text>
                 <Text style={[styles.bold, styles.rightAligned]}>Quantity:</Text>
-                <Text>{position.quantity}</Text>
+                <Text>{position.quantity.toFixed(2)}</Text>
               </View>
               <View style={styles.row}>
                 <Text style={styles.bold}>Purchase Price:</Text>
@@ -114,6 +116,8 @@ const PortfolioScreen = () => {
                 <Text>${position.currentPrice}</Text>
               </View>
               <View style={styles.row}>
+                <Text style={[styles.bold, styles.rightAligned]}>Current Value:</Text>
+                <Text>${position.currentValue.toFixed(2)}</Text>
                 <Text style={styles.bold}>Gain/Loss:</Text>
                 <Text style={position.gainLoss >= 0 ? styles.positive : styles.negative}>${position.gainLoss.toFixed(2)}</Text>
               </View>

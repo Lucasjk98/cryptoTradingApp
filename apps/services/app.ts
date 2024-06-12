@@ -24,6 +24,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/transactions', transactionRoutes);
 
+
 app.get('/api/crypto/news', async (req, res) => {
   const { currencies } = req.query;
 
@@ -61,5 +62,16 @@ app.post('/users', async (req, res) => {
         res.status(400).send(error.message);
     }
 });
+
+const initServer = async () => {
+  try {
+    await connectToDatabase();
+    console.log('Database connected successfully.');
+  } catch (error) {
+    console.error('Database connection failed:', error);
+  }
+};
+
+initServer();
 
 export const handler = serverless(app);

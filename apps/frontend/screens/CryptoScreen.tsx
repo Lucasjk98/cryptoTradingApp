@@ -71,20 +71,23 @@ const CryptoScreen = () => {
   console.log('initiate transaction');
   const userId = await AsyncStorage.getItem('userId');
   const symbol = cryptoData.symbol; 
-  const purchasePrice = cryptoData.current_price; 
-
+  const purchasePrice = cryptoData.current_price;
   let quantity = parseFloat(cryptoAmount);
-    if (!quantity && dollarAmount) {
-      quantity = parseFloat(dollarAmount) / purchasePrice;
-    }
 
-  try {
-    const response = await axios.post(`http://localhost:3000/api/portfolio/${userId}/portfolio`, {
-      symbol,
-      quantity,
-      purchasePrice,
-      type,
-    });
+  if (!quantity && dollarAmount) {
+      quantity = parseFloat(dollarAmount) / purchasePrice;
+  }
+
+  if (type === 'sell') {
+      quantity = -quantity;
+ }
+  
+  try { const response = await axios.post(`http://localhost:3000/api/portfolio/${userId}/portfolio`, {
+    symbol,
+    quantity,
+    purchasePrice,
+    type,
+  });
 
     if (response.status === 200 || response.status === 201) {
       alert('Transaction successful');

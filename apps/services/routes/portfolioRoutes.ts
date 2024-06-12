@@ -45,11 +45,13 @@ router.get('/:userId/portfolio', async (req, res) => {
       const crypto = cryptoData.find((crypto) => crypto.id.toUpperCase() === position.symbol.toUpperCase());
       const currentPrice = crypto ? crypto.current_price : 0;
       const gainLoss = (currentPrice - position.purchasePrice) * position.quantity;
+      const currentValue = currentPrice * position.quantity;
 
       return {
         ...position._doc,
         currentPrice,
         gainLoss,
+        currentValue
       };
     });
 
@@ -95,7 +97,7 @@ router.post('/:userId/portfolio', async (req, res) => {
       user.totalCash -= totalCost;
     } else if (type === 'sell') {
       // Add the sale price to the user's total cash
-      user.totalCash += purchasePrice * quantity;
+      user.totalCash += purchasePrice * -quantity;
     }
 
     if (portfolioItem) {
