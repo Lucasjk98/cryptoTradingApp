@@ -60,10 +60,11 @@ useEffect(() => {
 
 
   const register = async (username: string, password: string) => {
-    const user = await registerUser(username, password);
-    setIsAuthenticated(true);
-    setUserId(user.id);
-    await AsyncStorage.setItem('userId', user.id); 
+    try{
+      const user = await registerUser(username, password);
+    } catch (error) {
+      console.error('Error registering user:', error);
+    }  
   };
 
   const logout = () => {

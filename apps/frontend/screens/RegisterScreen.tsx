@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../AuthContext';
 
 type RootStackParamList = {
@@ -25,7 +26,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const handleSubmit = async () => {
     try {
       await register(username, password);
-      navigation.navigate('Home');
+      navigation.navigate('Login');
     } catch (error) {
       console.error('Error registering user:', error);
     }
