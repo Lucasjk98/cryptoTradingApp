@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -10,7 +11,6 @@ const PortfolioScreen = () => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null); // assuming you have a way to get userId
 
-  useEffect(() => {
     const fetchAndCacheCryptoData = async () => {
       try {
         const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
@@ -69,9 +69,13 @@ const PortfolioScreen = () => {
       }
     };
 
-    fetchAndCacheCryptoData();
-    fetchPortfolioData();
-  }, [userId]);
+   useFocusEffect(
+    useCallback(() => {
+      setLoading(true);
+      fetchAndCacheCryptoData();
+      fetchPortfolioData();
+    }, [])
+  );
 
   if (loading) {
     return (
