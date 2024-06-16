@@ -69,10 +69,18 @@ const PortfolioScreen = () => {
       }
     };
 
+    useEffect(() => {
+    fetchAndCacheCryptoData();
+    const interval = setInterval(() => {
+      fetchAndCacheCryptoData();
+    }, 5 * 60 * 1000); // 5 minutes interval
+
+    return () => clearInterval(interval);
+  }, []);
+
    useFocusEffect(
     useCallback(() => {
       setLoading(true);
-      fetchAndCacheCryptoData();
       fetchPortfolioData();
     }, [])
   );
