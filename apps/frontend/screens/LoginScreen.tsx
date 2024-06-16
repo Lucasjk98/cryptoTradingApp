@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useAuth } from '../../services/AuthContext';
+import { useAuth } from '../AuthContext';
 
 type RootStackParamList = {
   Login: undefined;

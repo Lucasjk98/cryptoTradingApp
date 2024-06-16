@@ -1,11 +1,13 @@
 // AuthContext.tsx
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { loginUser, registerUser } from './api';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { loginUser, registerUser } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   userId: string | null;
+  username: string | null;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string) => Promise<void>;
   logout: () => void;
@@ -15,8 +17,26 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+
+useEffect(() => {
+    const checkToken = async () => {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+            const decoded: any = jwtDecode(token);
+            if (decoded.exp * 1000 > Date.now()) {
+                setIsAuthenticated(true);
+                setUserId(decoded.userId);
+                setUsername(decoded.username);
+            } else {
+                await AsyncStorage.removeItem('token');
+            }
+        }
+    };
+    checkToken();
+}, []);
+
 
  const login = async (username: string, password: string) => {
   try {
@@ -26,7 +46,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (response && response.token) {
       setIsAuthenticated(true);
       setUserId(response.user.id); 
+      setUsername(response.user.username);
       await AsyncStorage.setItem('userId', response.user._id);
+      await AsyncStorage.setItem('username', response.user.username);
+      await AsyncStorage.setItem('token', response.token);
     } else {
       console.error('Invalid login response', response);
     }
@@ -50,7 +73,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userId, login, register, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, userId, username, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

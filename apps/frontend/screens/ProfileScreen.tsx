@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useAuth } from '../../services/AuthContext';
+import { useAuth } from '../AuthContext';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();

@@ -1,7 +1,9 @@
+import 'dotenv/config';
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User';
+import dotenv from 'dotenv';
 
 const router = express.Router();
 
@@ -22,10 +24,11 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        console.log('Received login request:', username, password); // Add this line
+        console.log('Received login request:', username, password); 
         const user = await User.findOne({ username });
         if (user && await bcrypt.compare(password, user.password)) {
-            const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
+            console.log('JWT secret:', process.env.JWT_SECRET);
+            const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '10m' });
             res.status(200).json({ message: 'Login successful', token, user });
         } else {
             res.status(401).json({ message: 'Invalid username or password' });

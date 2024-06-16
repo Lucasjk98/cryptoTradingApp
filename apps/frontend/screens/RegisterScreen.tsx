@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useAuth } from '../../services/AuthContext';
+import { useAuth } from '../AuthContext';
 
 type RootStackParamList = {
   Register: undefined;

@@ -3,7 +3,7 @@ import { View, Text, Button, TextInput, StyleSheet, Image, Linking, TouchableOpa
 import axios from 'axios';
 import { getCryptoNews } from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useAuth } from '../../services/AuthContext';
+import { useAuth } from '../AuthContext';
 const LOCAL_STORAGE_KEY = 'cryptoDataCache';
 
 const CryptoScreen = () => {

@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import AppNavigator from './AppNavigator';
 import AuthNavigator from './AuthNavigator';
-import { AuthProvider, useAuth } from '../services/AuthContext';
+import { AuthProvider, useAuth } from './AuthContext';
 
 const MainNavigator = () => {
   const { isAuthenticated } = useAuth();
