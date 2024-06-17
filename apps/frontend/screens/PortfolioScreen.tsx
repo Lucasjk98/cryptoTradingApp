@@ -9,7 +9,7 @@ const LOCAL_STORAGE_KEY = 'cryptoDataCache';
 const PortfolioScreen = () => {
   const [portfolioData, setPortfolioData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState(null); // assuming you have a way to get userId
+  const [userId, setUserId] = useState(null); 
 
     const fetchAndCacheCryptoData = async () => {
       try {

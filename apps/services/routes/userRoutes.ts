@@ -3,7 +3,10 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User';
+import { Portfolio } from '../models/Portfolio';
+import { Transaction } from '../models/Transaction';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
 const router = express.Router();
 
@@ -36,6 +39,30 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error });
     }
+});
+
+router.delete('/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid userId' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    await Transaction.deleteMany({ userId: user._id });
+    await Portfolio.deleteMany({ userId: user._id });
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({ message: 'User account deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user account:', error);
+    res.status(400).json({ message: 'Error deleting user account' });
+  }
 });
 
 // Get user data

@@ -48,9 +48,19 @@ export const loginUser = async (username: string, password: string) => {
   }
 };
 
-export const getUserData = async (id: string) => {
+export const deleteUser = async (userId: string) => {
   try {
-    const response = await backendApi.get(`/users/${id}`);
+    const response = await backendApi.delete(`/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting user account:', error);
+    throw error;
+  }
+};
+
+export const getUserData = async (userId: string) => {
+  try {
+    const response = await backendApi.get(`/users/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching user data:', error);

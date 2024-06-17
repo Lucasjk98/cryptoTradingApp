@@ -1,6 +1,6 @@
 import express from 'express';
 import { User } from '../models/User';
-import { Portfolio } from '../models/portfolio';
+import { Portfolio } from '../models/Portfolio';
 import { Transaction } from '../models/Transaction';
 import mongoose from 'mongoose';
 import AsyncStorage from '@react-native-async-storage/async-storage';

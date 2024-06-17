@@ -5,7 +5,7 @@ import serverless from 'serverless-http'
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { User } from './models/User';
-import { Portfolio } from './models/portfolio'
+import { Portfolio } from './models/Portfolio'
 import { Transaction } from './models/Transaction'
 import { connectToDatabase } from './config/database'
 import dotenv from 'dotenv';

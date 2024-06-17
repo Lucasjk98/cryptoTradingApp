@@ -1,6 +1,6 @@
 // AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { loginUser, registerUser } from '../services/api';
+import { loginUser, registerUser, deleteUser } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 
@@ -11,6 +11,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string) => Promise<void>;
   logout: () => void;
+  deleteUserAccount: (userId: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -73,8 +74,17 @@ useEffect(() => {
     AsyncStorage.removeItem('userId'); 
   };
 
+  const deleteUserAccount = async (userId: string) => {
+    try {
+      await deleteUser(userId);
+      logout(); 
+    } catch (error) {
+      console.error('Error deleting user account:', error);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userId, username, login, register, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, userId, username, login, register, logout, deleteUserAccount }}>
       {children}
     </AuthContext.Provider>
   );

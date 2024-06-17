@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { IPortfolio } from './portfolio';
+import { IPortfolio } from './Portfolio';
 import { ITransaction } from './Transaction';
 
 export interface IUser extends Document {

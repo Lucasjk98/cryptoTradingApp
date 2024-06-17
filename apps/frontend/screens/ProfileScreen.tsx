@@ -1,11 +1,34 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
-  const { logout } = useAuth();
+  const { logout, deleteUserAccount } = useAuth();
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const storedUserId = await AsyncStorage.getItem('userId');
+      if (storedUserId) {
+        setUserId(storedUserId);
+      } else {
+        console.error("User ID not found in AsyncStorage");
+      }
+    };
+    fetchUserId();
+  }, []);
+
+  const handleDeleteAccount = async () => {
+    if (userId) {
+      console.log("deleting user account", userId);
+      await deleteUserAccount(userId);
+      navigation.navigate('Login');
+    } 
+  };
 
   return (
     <View style={styles.container}>
@@ -30,6 +53,13 @@ const ProfileScreen = () => {
           <Button
             title="Logout"
             onPress={logout}
+            color="#1E90FF"
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Delete Account"
+            onPress={handleDeleteAccount}
             color="#1E90FF"
           />
         </View>
