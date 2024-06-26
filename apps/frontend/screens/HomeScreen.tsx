@@ -11,7 +11,7 @@ const HomeScreen = () => {
       <Text style={styles.header}>Home</Text>
       <Text>Welcome back {username}! your current ranking is ___</Text>
       <Text>Here will be an overview of your account(total cash, total gain/loss, etc).</Text>
-      <Text>Recent news and updates could be displayed here along with major indices (S&P500, NASDAQ, DJI, BTC).</Text>
+      <Text>Recent news and updates could be displayed here along with major indices (S&P500, NASDAQ, DJI, BTC, ETH).</Text>
       <Button 
         title="User Guide"
         onPress={() => navigation.navigate('UserGuide')}

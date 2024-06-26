@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../AuthContext';
+import { StackNavigationProp } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ProfileScreen = () => {
+const ProfileScreen= () => {
   const navigation = useNavigation();
   const { logout, deleteUserAccount } = useAuth();
   const [userId, setUserId] = useState<string | null>(null);

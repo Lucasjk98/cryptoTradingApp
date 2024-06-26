@@ -14,7 +14,6 @@ import LoginScreen from './screens/LoginScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-
 function ProfileStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

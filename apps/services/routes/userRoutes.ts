@@ -10,7 +10,6 @@ import mongoose from 'mongoose';
 
 const router = express.Router();
 
-// Register a new user
 router.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -23,7 +22,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// Login a user
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -65,7 +63,6 @@ router.delete('/:userId', async (req, res) => {
   }
 });
 
-// Get user data
 router.get('/:id', async (req, res) => {
     try {
         const user = await User.findById(req.params.id);

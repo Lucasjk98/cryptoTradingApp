@@ -20,7 +20,7 @@ const CryptoScreen = () => {
     fetchAndCacheCryptoData();
   }, 90000); 
 
-  return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+  return () => clearInterval(intervalId); 
   }, []);
 
   const fetchAndCacheCryptoData = async () => {

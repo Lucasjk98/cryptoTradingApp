@@ -4,21 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../AuthContext';
 
-type RootStackParamList = {
-  Register: undefined;
-  Home: undefined;
-};
-
-type RegisterScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'Register'
->;
-
-type Props = {
-  navigation: RegisterScreenNavigationProp;
-};
-
-const RegisterScreen: React.FC<Props> = ({ navigation }) => {
+const RegisterScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { register } = useAuth();

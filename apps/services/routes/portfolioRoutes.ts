@@ -47,8 +47,10 @@ router.get('/:userId/portfolio', async (req, res) => {
       const gainLoss = (currentPrice - position.purchasePrice) * position.quantity;
       const currentValue = currentPrice * position.quantity;
 
+      const plainPosition = position.toObject()
+
       return {
-        ...position._doc,
+        ...plainPosition,
         currentPrice,
         gainLoss,
         currentValue

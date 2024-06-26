@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getPortfolio } from '../../services/api';
 
 const LOCAL_STORAGE_KEY = 'cryptoDataCache';
 
@@ -11,74 +12,22 @@ const PortfolioScreen = () => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null); 
 
-    const fetchAndCacheCryptoData = async () => {
-      try {
-        const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
-          params: {
-            vs_currency: 'usd',
-            order: 'market_cap_desc',
-            per_page: 100,
-            page: 1,
-            sparkline: false,
-          },
-        });
-        await AsyncStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(response.data));
-      } catch (error) {
-        console.error('Error fetching and caching crypto data:', error);
-      }
-    };
-
     const fetchPortfolioData = async () => {
-      try {
-        const userId = await AsyncStorage.getItem('userId');
-        if (!userId) throw new Error('User ID not found in AsyncStorage');
-        
-        const response = await axios.get(`http://localhost:3000/api/portfolio/${userId}/portfolio`);
-        const portfolioData = response.data;
+    try {
+      const storedUserId = await AsyncStorage.getItem('userId');
+      if (!storedUserId) throw new Error('User ID not found in AsyncStorage');
+      setUserId(storedUserId);
 
-        // Fetch the cached crypto data
-        const cachedData = JSON.parse(await AsyncStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+      const portfolioData = await getPortfolio(storedUserId);
+      setPortfolioData(portfolioData);
+    } catch (error) {
+      console.error('Error fetching portfolio data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        // Calculate gain/loss for each position
-        const positionsWithPrices = portfolioData.positions.map(position => {
-          const crypto = cachedData.find(crypto => crypto.symbol.toUpperCase() === position.symbol.toUpperCase());
-          const currentPrice = crypto ? crypto.current_price : 0;
-          const gainLoss = (currentPrice - position.purchasePrice) * position.quantity;
-          const currentValue = currentPrice * position.quantity;
-          return {
-            ...position,
-            currentPrice,
-            gainLoss,
-            currentValue,
-          };
-        });
-
-        const totalGainLoss = positionsWithPrices.reduce((acc, position) => acc + position.gainLoss, 0);
-
-        // Update the portfolio data with calculated gain/loss
-        setPortfolioData({
-          ...portfolioData,
-          positions: positionsWithPrices,
-          totalGainLoss
-        });
-
-      } catch (error) {
-        console.error('Error fetching portfolio:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    useEffect(() => {
-    fetchAndCacheCryptoData();
-    const interval = setInterval(() => {
-      fetchAndCacheCryptoData();
-    }, 5 * 60 * 1000); // 5 minutes interval
-
-    return () => clearInterval(interval);
-  }, []);
-
-   useFocusEffect(
+  useFocusEffect(
     useCallback(() => {
       setLoading(true);
       fetchPortfolioData();
@@ -117,7 +66,7 @@ const PortfolioScreen = () => {
             <View key={index} style={styles.positionContainer}>
               <View style={styles.row}>
                 <Text style={styles.bold}>Symbol:</Text>
-                <Text>{position.symbol}</Text>
+                <Text>{position.symbol.toUpperCase()}</Text>
                 <Text style={[styles.bold, styles.rightAligned]}>Quantity:</Text>
                 <Text>{position.quantity.toFixed(2)}</Text>
               </View>
