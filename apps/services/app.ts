@@ -13,6 +13,7 @@ import axios from 'axios';
 import userRoutes from './routes/userRoutes';
 import portfolioRoutes from './routes/portfolioRoutes';
 import transactionRoutes from './routes/transactionRoutes';
+import cryptoDataRoutes from './routes/cryptoDataRoutes';
 
 
 
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/crypto', cryptoDataRoutes);
 
 
 app.get('/api/crypto/news', async (req, res) => {

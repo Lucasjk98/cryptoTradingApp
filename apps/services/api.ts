@@ -102,3 +102,13 @@ export const getTransactions = async (userId: string) => {
     throw error;
   }
 };
+
+export const getCryptoData = async () => {
+  try {
+    const response = await backendApi.get(`/crypto/crypto-data`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching crypto data:', error);
+    throw error;
+  }
+};
