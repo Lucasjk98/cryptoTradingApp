@@ -112,3 +112,24 @@ export const getCryptoData = async () => {
     throw error;
   }
 };
+
+export const getHistoricalDataDaily = async (id: string) => {
+  try {
+    const response = await backendApi.get(`/crypto/crypto-historical-data/daily/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching daily historical data:', error);
+    throw error;
+  }
+};
+
+export const getHistoricalDataYearly = async (id: string) => {
+  try {
+    const response = await backendApi.get(`/crypto/crypto-historical-data/yearly/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching yearly historical data:', error);
+    throw error;
+  }
+};
+

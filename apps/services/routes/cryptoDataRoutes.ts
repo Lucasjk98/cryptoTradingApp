@@ -20,4 +20,36 @@ router.get('/crypto-data', async (req, res) => {
   }
 });
 
+router.get('/crypto-historical-data/yearly/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${id}/market_chart`, {
+      params: {
+        vs_currency: 'usd',
+        days: 365, // Fetch data for the past year
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching yearly historical data:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+router.get('/crypto-historical-data/daily/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${id}/market_chart`, {
+      params: {
+        vs_currency: 'usd',
+        days: 1, // Fetch data for the past 24 hours
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching daily historical data:', error);
+    res.status(500).send('Server error');
+  }
+});
+
 export default router;
