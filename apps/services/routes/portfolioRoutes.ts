@@ -53,7 +53,6 @@ router.get('/crypto/data', async (req, res) => {
 });
 
 
-// Add a new portfolio item for a user
 router.post('/:userId/portfolio', async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -68,7 +67,6 @@ router.post('/:userId/portfolio', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Find the portfolio item in the user's portfolio
     const portfolioItem = user.portfolio.find(item => item.symbol === symbol);
 
     if (type === 'buy') {
@@ -76,26 +74,21 @@ router.post('/:userId/portfolio', async (req, res) => {
       if (user.totalCash < totalCost) {
         return res.status(400).json({ message: 'Insufficient funds to complete the purchase' });
       }
-      // Subtract the purchase price from the user's total cash
       user.totalCash -= totalCost;
     } else if (type === 'sell') {
-      // Add the sale price to the user's total cash
       user.totalCash += purchasePrice * -quantity;
     }
 
     if (portfolioItem) {
-      // Update the quantity if the portfolio item exists
       portfolioItem.quantity += quantity;
 
       if (portfolioItem.quantity <= 0) {
-        // Remove the portfolio item if quantity is less than or equal to 0
         user.portfolio = user.portfolio.filter(item => item.symbol !== symbol);
         res.status(200).json({ message: 'Portfolio item removed successfully' });
       } else {
         res.status(200).json({ message: 'Portfolio item updated successfully', portfolioItem });
       }
     } else {
-      // Add a new portfolio item if it doesn't exist
       user.portfolio.push({
         userId: user._id,
         symbol,
@@ -105,7 +98,7 @@ router.post('/:userId/portfolio', async (req, res) => {
       res.status(201).json({ message: 'Portfolio item added successfully', newPortfolioItem: { symbol, quantity, purchasePrice } });
     }
 
-    // Log the transaction
+    
     const newTransaction = new Transaction({
       symbol,
       type,
@@ -115,7 +108,6 @@ router.post('/:userId/portfolio', async (req, res) => {
     });
     user.transactions.push(newTransaction);
 
-    // Save the user document
     await user.save();
 
   } catch (error) {

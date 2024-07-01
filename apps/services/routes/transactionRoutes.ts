@@ -3,7 +3,7 @@ import { User } from '../models/User';
 
 const router = express.Router();
 
-// Add a new transaction
+
 router.post('/:userId/transactions', async (req, res) => {
   try {
     const { symbol, type, quantity, price } = req.body;
@@ -21,7 +21,6 @@ router.post('/:userId/transactions', async (req, res) => {
   }
 });
 
-// get transactions
 router.get('/:userId/transactions', async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);

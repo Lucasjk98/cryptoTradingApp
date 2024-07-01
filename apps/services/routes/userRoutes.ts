@@ -7,8 +7,52 @@ import { Portfolio } from '../models/Portfolio';
 import { Transaction } from '../models/Transaction';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import axios from 'axios';
 
 const router = express.Router();
+
+const fetchCurrentPrices = async (symbols) => {
+  try {
+    const response = await axios.get('https://api.coingecko.com/api/v3/simple/price', {
+      params: {
+        ids: symbols.join(','),
+        vs_currencies: 'usd',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching current prices:', error);
+    throw error;
+  }
+};
+
+router.get('/leaderboard', async (req, res) => {
+  try {
+    const users = await User.find().lean();
+    const symbols = Array.from(new Set(users.flatMap(user => user.portfolio.map(position => position.symbol.toLowerCase()))));
+    const prices = await fetchCurrentPrices(symbols);
+
+    const usersWithGainLoss = users.map(user => {
+      const totalGainLoss = user.portfolio.reduce((acc, position) => {
+        const currentPrice = prices[position.symbol.toLowerCase()]?.usd || 0;
+        const gainLoss = (currentPrice - position.purchasePrice) * position.quantity;
+        return acc + gainLoss;
+      }, 0);
+
+      return {
+        username: user.username,
+        totalGainLoss,
+      };
+    }).filter(user => user.totalGainLoss !== 0);
+
+    usersWithGainLoss.sort((a, b) => b.totalGainLoss - a.totalGainLoss);
+
+    res.status(200).json(usersWithGainLoss);
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+    res.status(500).json({ message: 'Server error', error: error.message || error });
+  }
+});
 
 router.post('/register', async (req, res) => {
     try {
@@ -75,5 +119,9 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ message: 'Error fetching user data', error });
     }
 });
+
+
+
+
 
 export default router;

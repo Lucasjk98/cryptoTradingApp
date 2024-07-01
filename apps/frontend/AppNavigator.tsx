@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -14,15 +15,45 @@ import LoginScreen from './screens/LoginScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
 function ProfileStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Profile" component={ProfileScreen} />
-      <Stack.Screen name="Transactions" component={TransactionsScreen} />
-      <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
+      <Stack.Screen
+        name="Transactions"
+        component={TransactionsScreen}
+        options={({ navigation }) => ({
+          headerShown: true,
+          headerTitle: 'Transactions',
+          headerTitleAlign: 'center',
+          headerLeft: () => (
+            <Button
+              onPress={() => navigation.goBack()}
+              title="Back"
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="Leaderboard"
+        component={LeaderboardScreen}
+        options={({ navigation }) => ({
+          headerShown: true,
+          headerTitle: 'Leaderboard',
+          headerTitleAlign: 'center',
+          headerLeft: () => (
+            <Button
+              onPress={() => navigation.goBack()}
+              title="Back"
+            />
+          ),
+        })}
+      />
     </Stack.Navigator>
   );
 }
+
 
 export default function App() {
   return (

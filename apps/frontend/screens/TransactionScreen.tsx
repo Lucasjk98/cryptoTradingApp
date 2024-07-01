@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button} from 'react-native';
 import axios from 'axios';
 import { useAuth } from '../AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const TransactionsScreen = () => {
+const TransactionsScreen = ({navigation}) => {
   const { userId } = useAuth();
   const [transactions, setTransactions] = useState([]);
 

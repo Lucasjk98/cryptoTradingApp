@@ -133,3 +133,13 @@ export const getHistoricalDataYearly = async (id: string) => {
   }
 };
 
+export const getLeaderboard = async () => {
+  try {
+    const response = await backendApi.get('/users/leaderboard');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+    throw error;
+  }
+};
+
