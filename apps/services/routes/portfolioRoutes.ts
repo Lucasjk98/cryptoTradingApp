@@ -23,14 +23,21 @@ router.get('/:userId/portfolio', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Get the user's portfolio symbols
-    const portfolioSymbols = user.portfolio.map((item) => item.symbol).join(',');
+    res.status(200).json({
+      totalCash: user.totalCash,
+      positions: user.portfolio,
+    });
+  } catch (error) {
+    console.error('Error fetching portfolio:', error);
+    res.status(400).json({ message: 'Error fetching portfolio', error: error.message || error });
+  }
+});
 
-    // Fetch the latest crypto prices from CoinGecko
+router.get('/crypto/data', async (req, res) => {
+  try {
     const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
       params: {
         vs_currency: 'usd',
-        ids: portfolioSymbols,
         order: 'market_cap_desc',
         per_page: 100,
         page: 1,
@@ -38,36 +45,10 @@ router.get('/:userId/portfolio', async (req, res) => {
       },
     });
 
-    const cryptoData = response.data;
-
-    // Calculate gain/loss for each position
-    const positionsWithPrices = user.portfolio.map((position) => {
-      const crypto = cryptoData.find((crypto) => crypto.id.toUpperCase() === position.symbol.toUpperCase());
-      const currentPrice = crypto ? crypto.current_price : 0;
-      const gainLoss = (currentPrice - position.purchasePrice) * position.quantity;
-      const currentValue = currentPrice * position.quantity;
-
-      const plainPosition = position.toObject()
-
-      return {
-        ...plainPosition,
-        currentPrice,
-        gainLoss,
-        currentValue
-      };
-    });
-
-    user.totalGainLoss = positionsWithPrices.reduce((acc, position) => acc + position.gainLoss, 0);
-    await user.save();
-
-    res.status(200).json({
-      totalCash: user.totalCash,
-      totalGainLoss: user.totalGainLoss,
-      positions: positionsWithPrices,
-    });
+    res.status(200).json(response.data);
   } catch (error) {
-    console.error('Error fetching portfolio:', error);
-    res.status(400).json({ message: 'Error fetching portfolio', error: error.message || error });
+    console.error('Error fetching crypto data:', error);
+    res.status(400).json({ message: 'Error fetching crypto data', error: error.message || error });
   }
 });
 

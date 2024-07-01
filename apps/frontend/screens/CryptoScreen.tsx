@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Image, Button, TextInput, StyleSheet, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LineChart } from 'react-native-chart-kit';
 import { getCryptoData, addToPortfolio, getHistoricalDataDaily, getHistoricalDataYearly } from '../../services/api';
@@ -14,7 +14,7 @@ const CryptoScreen = () => {
   const [query, setQuery] = useState<string>('');
   const [dollarAmount, setDollarAmount] = useState('');
   const [cryptoAmount, setCryptoAmount] = useState('');
-  const [duration, setDuration] = useState<string>('1D'); // default to 1 day
+  const [duration, setDuration] = useState<string>('1D'); 
   const [data, setData] = useState([]);
   const [labels, setLabels] = useState([]);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false, value: 0 });
@@ -45,21 +45,18 @@ const CryptoScreen = () => {
 
   const fetchHistoricalData = async (cryptoId: string) => {
     try {
-      // Fetch and cache yearly data
       const yearlyData = await getHistoricalDataYearly(cryptoId);
       const historicalDataCache = await AsyncStorage.getItem(HISTORICAL_DATA_KEY);
       const parsedHistoricalDataCache = JSON.parse(historicalDataCache || '{}');
       parsedHistoricalDataCache[cryptoId] = yearlyData;
       await AsyncStorage.setItem(HISTORICAL_DATA_KEY, JSON.stringify(parsedHistoricalDataCache));
       
-      // Fetch and cache daily data
       const dailyData = await getHistoricalDataDaily(cryptoId);
       const dailyDataCache = await AsyncStorage.getItem(DAILY_DATA_KEY);
       const parsedDailyDataCache = JSON.parse(dailyDataCache || '{}');
       parsedDailyDataCache[cryptoId] = dailyData;
       await AsyncStorage.setItem(DAILY_DATA_KEY, JSON.stringify(parsedDailyDataCache));
 
-      // Process data based on current duration
       if (duration === '1D') {
         processData(dailyData);
       } else {
@@ -148,11 +145,11 @@ const CryptoScreen = () => {
     let formattedData = [];
     let formattedLabels = [];
 
-    const now = Date.now(); // Current timestamp in milliseconds
+    const now = Date.now(); 
 
     if (duration === '1D') {
       const last24HoursData = prices.filter(item => item[0] > (now - 24 * 60 * 60 * 1000));
-      const interval = Math.max(Math.floor(last24HoursData.length / 12), 1); // Ensure interval is at least 1
+      const interval = Math.max(Math.floor(last24HoursData.length / 12), 1); 
 
       formattedData = last24HoursData.filter((_, index) => index % interval === 0).map(item => item[1]);
       formattedLabels = last24HoursData.filter((_, index) => index % interval === 0).map(item => new Date(item[0]).toLocaleTimeString([], { hour: '2-digit' }));
@@ -206,7 +203,13 @@ const CryptoScreen = () => {
         <Button title="Search" onPress={handleSearch} />
         {cryptoData ? (
           <View style={styles.dataContainer}>
+          <View style={styles.titleContainer}>
             <Text style={styles.title}>{cryptoData.name}</Text>
+            <Image
+              source={{ uri: cryptoData.image }}
+              style={styles.cryptoImage}
+            />
+          </View>
             <Text><Text style={styles.bold}>Current Price:</Text> ${cryptoData.current_price}</Text>
             <Text><Text style={styles.bold}>Market Cap:</Text> ${cryptoData.market_cap.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</Text>
             <Text><Text style={styles.bold}>Daily High:</Text> ${cryptoData.high_24h}</Text>
@@ -323,8 +326,19 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  cryptoImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginLeft:10,
+  },
   title: {
-    fontSize: 24,
+    fontSize: 40,
     fontWeight: 'bold',
     marginBottom: 10,
   },

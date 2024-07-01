@@ -1,88 +1,76 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getPortfolio, getCryptoData } from '../../services/api';
 
-const LOCAL_STORAGE_KEY = 'cryptoDataCache';
+const CACHE_KEY = 'cryptoDataCache';
+const CACHE_EXPIRY = 5 * 60 * 1000; 
 
 const PortfolioScreen = () => {
   const [portfolioData, setPortfolioData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState(null); 
 
-    const fetchAndCacheCryptoData = async () => {
-      try {
-        const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
-          params: {
-            vs_currency: 'usd',
-            order: 'market_cap_desc',
-            per_page: 100,
-            page: 1,
-            sparkline: false,
-          },
-        });
-        await AsyncStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(response.data));
-      } catch (error) {
-        console.error('Error fetching and caching crypto data:', error);
+  const getCachedCryptoData = async (symbols) => {
+    try {
+      const cachedData = await AsyncStorage.getItem(CACHE_KEY);
+      if (cachedData) {
+        const { timestamp, data } = JSON.parse(cachedData);
+        if (Date.now() - timestamp < CACHE_EXPIRY) {
+          return data;
+        }
       }
-    };
+      const freshData = await getCryptoData(symbols);
+      await AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: freshData }));
+      return freshData;
+    } catch (error) {
+      console.error('Error with crypto data cache:', error);
+      return null;
+    }
+  };
 
-    const fetchPortfolioData = async () => {
-      try {
-        const userId = await AsyncStorage.getItem('userId');
-        if (!userId) throw new Error('User ID not found in AsyncStorage');
-        
-        const response = await axios.get(`http://localhost:3000/api/portfolio/${userId}/portfolio`);
-        const portfolioData = response.data;
+  const fetchPortfolioData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) throw new Error('User ID not found in AsyncStorage');
 
-        // Fetch the cached crypto data
-        const cachedData = JSON.parse(await AsyncStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+      const portfolioResponse = await getPortfolio(userId);
+      const symbols = portfolioResponse.positions.map(p => p.symbol);
+      const cryptoData = await getCachedCryptoData(symbols);
 
-        // Calculate gain/loss for each position
-        const positionsWithPrices = portfolioData.positions.map(position => {
-          const crypto = cachedData.find(crypto => crypto.symbol.toUpperCase() === position.symbol.toUpperCase());
-          const currentPrice = crypto ? crypto.current_price : 0;
-          const gainLoss = (currentPrice - position.purchasePrice) * position.quantity;
-          const currentValue = currentPrice * position.quantity;
-          return {
-            ...position,
-            currentPrice,
-            gainLoss,
-            currentValue,
-          };
-        });
+      const positionsWithPrices = portfolioResponse.positions.map(position => {
+        const crypto = cryptoData.find(c => c.symbol.toLowerCase() === position.symbol.toLowerCase());
+        const currentPrice = crypto ? crypto.current_price : 0;
+        const gainLoss = (currentPrice - position.purchasePrice) * position.quantity;
+        const currentValue = currentPrice * position.quantity;
 
-        const totalGainLoss = positionsWithPrices.reduce((acc, position) => acc + position.gainLoss, 0);
+        return {
+          ...position,
+          currentPrice,
+          gainLoss,
+          currentValue
+        };
+      });
 
-        // Update the portfolio data with calculated gain/loss
-        setPortfolioData({
-          ...portfolioData,
-          positions: positionsWithPrices,
-          totalGainLoss
-        });
+      const totalGainLoss = positionsWithPrices.reduce((acc, position) => acc + position.gainLoss, 0);
 
-      } catch (error) {
-        console.error('Error fetching portfolio:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    useEffect(() => {
-    fetchAndCacheCryptoData();
-    const interval = setInterval(() => {
-      fetchAndCacheCryptoData();
-    }, 5 * 60 * 1000); // 5 minutes interval
-
-    return () => clearInterval(interval);
+      setPortfolioData({
+        ...portfolioResponse,
+        positions: positionsWithPrices,
+        totalGainLoss
+      });
+    } catch (error) {
+      console.error('Error fetching portfolio:', error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-   useFocusEffect(
+  useFocusEffect(
     useCallback(() => {
-      setLoading(true);
       fetchPortfolioData();
-    }, [])
+    }, [fetchPortfolioData])
   );
 
   if (loading) {
