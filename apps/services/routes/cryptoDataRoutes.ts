@@ -20,6 +20,22 @@ router.get('/crypto-data', async (req, res) => {
   }
 });
 
+router.get('/crypto-news', async (req, res) => {
+    try {
+        const response = await axios.get('https://api.polygon.io/v2/reference/news', {
+            params: {
+                ticker: 'BTC', 
+                limit: 10,
+                apiKey: 'YdbX_8bq1ewVPuDm1p7guQk6gVqrnkSH',
+            }
+        });
+        res.json(response.data.results);
+    } catch (error) {
+        console.error('Error fetching crypto news:', error);
+        res.status(500).send('Server error');
+    }
+});
+
 router.get('/crypto-historical-data/yearly/:id', async (req, res) => {
   const { id } = req.params;
   try {

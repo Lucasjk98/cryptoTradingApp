@@ -4,22 +4,15 @@ const backendApi = axios.create({
   baseURL: 'http://localhost:3000/api',
 });
 
-const newsApi = axios.create({
-  baseURL: 'http://localhost:3000/',
-});
 
-export const getCryptoNews = async (query: string) => {
-  try {
-    const response = await newsApi.get('/api/crypto/news', {
-      params: {
-        currencies: query,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching crypto news:', error);
-    throw error;
-  }
+export const getCryptoNews = async () => {
+    try {
+        const response = await backendApi.get('/crypto/crypto-news'); 
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching crypto news:', error);
+        throw error;
+    }
 };
 
 export const registerUser = async (username: string, password: string) => {
@@ -133,10 +126,12 @@ export const getHistoricalDataYearly = async (id: string) => {
   }
 };
 
-export const getLeaderboard = async () => {
+export const getLeaderboard = async (username: string) => {
   try {
     const response = await backendApi.get('/users/leaderboard');
-    return response.data;
+    const leaderboard = response.data;
+    const userRank = leaderboard.findIndex((user: any) => user.username === username) + 1;
+    return { leaderboard, userRank };
   } catch (error) {
     console.error('Error fetching leaderboard:', error);
     throw error;

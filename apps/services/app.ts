@@ -27,22 +27,6 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/crypto', cryptoDataRoutes);
 
 
-app.get('/api/crypto/news', async (req, res) => {
-  const { currencies } = req.query;
-
-  try {
-    const response = await axios.get('https://cryptopanic.com/api/v1/posts/', {
-      params: {
-        auth_token: process.env.CRYPTOPANIC_API_KEY,
-        currencies:currencies,
-      },
-    });
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching crypto news:', error);
-    res.status(500).json({ error: 'Failed to fetch crypto news' });
-  }
-});
 
 app.get('/', async (req, res) => {
     try {
