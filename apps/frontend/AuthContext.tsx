@@ -1,4 +1,3 @@
-// AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { loginUser, registerUser, deleteUser } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';

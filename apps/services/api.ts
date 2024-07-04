@@ -126,12 +126,10 @@ export const getHistoricalDataYearly = async (id: string) => {
   }
 };
 
-export const getLeaderboard = async (username: string) => {
+export const getLeaderboard = async () => {
   try {
     const response = await backendApi.get('/users/leaderboard');
-    const leaderboard = response.data;
-    const userRank = leaderboard.findIndex((user: any) => user.username === username) + 1;
-    return { leaderboard, userRank };
+    return response.data;
   } catch (error) {
     console.error('Error fetching leaderboard:', error);
     throw error;

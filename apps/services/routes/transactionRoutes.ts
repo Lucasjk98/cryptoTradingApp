@@ -10,7 +10,7 @@ router.post('/:userId/transactions', async (req, res) => {
     const user = await User.findById(req.params.userId);
     if (user) {
       const newTransaction = { symbol, type, quantity, price, date: new Date() };
-      user.transactions.push(newTransaction as any); // Cast to 'any' to avoid TypeScript error
+      user.transactions.push(newTransaction as any); 
       await user.save();
       res.status(201).json(newTransaction);
     } else {

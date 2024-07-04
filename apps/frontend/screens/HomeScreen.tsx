@@ -13,34 +13,35 @@ const HomeScreen = () => {
     const [cryptoPrices, setCryptoPrices] = useState({btc: null, eth: null});
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-              const { leaderboard, userRank } = await getLeaderboard(username);
-              setUserRank(userRank);
-              setTotalUsers(leaderboard.length);
-            } catch (error) {
-                console.error('Error fetching ranking:', error);
-            }
+    const fetchData = async () => {
+      try {
+        const leaderboard = await getLeaderboard();
+        const rank = leaderboard.findIndex(user => user.username === username) + 1;
+        setUserRank(rank);
+        setTotalUsers(leaderboard.length);
+      } catch (error) {
+        console.error('Error fetching ranking:', error);
+      }
 
-            try {
-              const newsData = await getCryptoNews();
-              setNews(newsData);
-            } catch (error) {
-                console.error('Error fetching news:', error);
-            }
+      try {
+        const newsData = await getCryptoNews();
+        setNews(newsData);
+      } catch (error) {
+        console.error('Error fetching news:', error);
+      }
 
-            try {
-              const data = await getCryptoData();
-              const btc = data.find(crypto => crypto.symbol === 'btc').current_price;
-              const eth = data.find(crypto => crypto.symbol === 'eth').current_price;
-              setCryptoPrices({ btc, eth });
-            } catch (error) {
-                console.error('Error fetching crypto prices:', error);
-            }
-          };
+      try {
+        const data = await getCryptoData();
+        const btc = data.find(crypto => crypto.symbol === 'btc').current_price;
+        const eth = data.find(crypto => crypto.symbol === 'eth').current_price;
+        setCryptoPrices({ btc, eth });
+      } catch (error) {
+        console.error('Error fetching crypto prices:', error);
+      }
+    };
 
-        fetchData();
-    }, [username]);
+    fetchData();
+  }, [username]);
 
     const renderNewsItem = ({ item }) => (
         <TouchableOpacity onPress={() => Linking.openURL(item.article_url)}>
@@ -65,7 +66,7 @@ const HomeScreen = () => {
       {cryptoPrices.eth && (
         <Text style={styles.cryptoPrice}>Ethereum (ETH): ${cryptoPrices.eth}</Text>
       )}
-      <Text style={styles.header}>Crypto News:</Text>
+      <Text style={styles.header}>Current News:</Text>
       <FlatList
                 data={news}
                 renderItem={renderNewsItem}

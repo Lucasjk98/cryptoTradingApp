@@ -20,7 +20,7 @@ const PortfolioScreen = () => {
           return data;
         }
       }
-      const freshData = await getCryptoData(symbols);
+      const freshData = await getCryptoData();
       await AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: freshData }));
       return freshData;
     } catch (error) {
@@ -105,7 +105,7 @@ const PortfolioScreen = () => {
             <View key={index} style={styles.positionContainer}>
               <View style={styles.row}>
                 <Text style={styles.bold}>Symbol:</Text>
-                <Text>{position.symbol}</Text>
+                <Text>{position.symbol.toUpperCase()}</Text>
                 <Text style={[styles.bold, styles.rightAligned]}>Quantity:</Text>
                 <Text>{position.quantity.toFixed(2)}</Text>
               </View>

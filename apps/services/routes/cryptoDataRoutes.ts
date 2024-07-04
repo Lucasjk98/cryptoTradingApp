@@ -1,5 +1,6 @@
-const express = require('express');
-const axios = require('axios');
+import express from 'express';
+import axios from 'axios';
+
 const router = express.Router();
 
 router.get('/crypto-data', async (req, res) => {
@@ -42,7 +43,7 @@ router.get('/crypto-historical-data/yearly/:id', async (req, res) => {
     const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${id}/market_chart`, {
       params: {
         vs_currency: 'usd',
-        days: 365, // Fetch data for the past year
+        days: 365, 
       },
     });
     res.json(response.data);
@@ -58,7 +59,7 @@ router.get('/crypto-historical-data/daily/:id', async (req, res) => {
     const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${id}/market_chart`, {
       params: {
         vs_currency: 'usd',
-        days: 1, // Fetch data for the past 24 hours
+        days: 1, 
       },
     });
     res.json(response.data);

@@ -10,8 +10,8 @@ const LeaderboardScreen = () => {
     const fetchLeaderboard = async () => {
       try {
         const data = await getLeaderboard();
-        console.log(data.leaderboard);
-        setLeaderboard(data.leaderboard);
+        console.log(data);
+        setLeaderboard(data);
       } catch (error) {
         console.error('Error fetching leaderboard:', error);
       } finally {

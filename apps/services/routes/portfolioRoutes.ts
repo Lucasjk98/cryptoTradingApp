@@ -9,7 +9,6 @@ import axios from 'axios';
 
 const router = express.Router();
 
-// Get user portfolio
 router.get('/:userId/portfolio', async (req, res) => {
   try {
     const userId = req.params.userId;

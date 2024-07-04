@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Button} from 'react-native';
 import axios from 'axios';
 import { useAuth } from '../AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTransactions } from '../../services/api';
 
 const TransactionsScreen = ({navigation}) => {
   const { userId } = useAuth();
@@ -14,8 +15,8 @@ const TransactionsScreen = ({navigation}) => {
         const userId = await AsyncStorage.getItem('userId');
         if (!userId) throw new Error('User ID not found in AsyncStorage');
 
-        const response = await axios.get(`http://localhost:3000/api/transactions/${userId}/transactions`);
-        setTransactions(response.data);
+        const response = await getTransactions(userId)
+        setTransactions(response);
       } catch (error) {
         console.error('Error fetching transactions:', error);
       }
@@ -30,7 +31,7 @@ const TransactionsScreen = ({navigation}) => {
         {transactions.length > 0 ? (
           transactions.map((transaction) => (
             <View key={transaction._id} style={styles.transactionContainer}>
-              <Text style={styles.transactionText}>Symbol: {transaction.symbol}</Text>
+              <Text style={styles.transactionText}>Symbol: {transaction.symbol.toUpperCase()}</Text>
               <Text style={styles.transactionText}>Type: {transaction.type}</Text>
               <Text style={styles.transactionText}>Quantity: {transaction.quantity}</Text>
               <Text style={styles.transactionText}>Price: ${transaction.price.toFixed(2)}</Text>
