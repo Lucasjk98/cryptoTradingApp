@@ -1,4 +1,4 @@
-# Trading App
+# Crypto Trading App
 
 ## Description
 A cryptocurrency trading application built with modern web technologies to simulate trading activities.
