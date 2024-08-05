@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react' 
-import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, Linking, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, Linking, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { AuthProvider, useAuth } from '../AuthContext';
+import { useAuth } from '../AuthContext';
 import { getLeaderboard, getCryptoNews, getCryptoData } from '../../services/api';
 
 const HomeScreen = () => {
-    const navigation = useNavigation();
-    const { username } = useAuth();
-    const [userRank, setUserRank] = useState(null);
-    const [totalUsers, setTotalUsers] = useState(null);
-    const [news, setNews] = useState([]);
-    const [cryptoPrices, setCryptoPrices] = useState({btc: null, eth: null});
+  const navigation = useNavigation();
+  const { username } = useAuth();
+  const [userRank, setUserRank] = useState(null);
+  const [totalUsers, setTotalUsers] = useState(null);
+  const [news, setNews] = useState([]);
+  const [cryptoPrices, setCryptoPrices] = useState({ btc: null, eth: null });
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const leaderboard = await getLeaderboard();
@@ -43,73 +43,163 @@ const HomeScreen = () => {
     fetchData();
   }, [username]);
 
-    const renderNewsItem = ({ item }) => (
-        <TouchableOpacity onPress={() => Linking.openURL(item.article_url)}>
-            <View style={styles.newsItem}>
-                <Image source={{ uri: item.image_url }} style={styles.newsImage} />
-                <Text style={styles.newsTitle}>{item.title}</Text>
-            </View>
-        </TouchableOpacity>
-    );
+  const renderNewsItem = ({ item }) => (
+    <TouchableOpacity onPress={() => Linking.openURL(item.article_url)} style={styles.newsCard}>
+      <Image source={{ uri: item.image_url }} style={styles.newsImage} />
+      <Text style={styles.newsTitle}>{item.title}</Text>
+    </TouchableOpacity>
+  );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Home</Text>
-      <Text>Welcome back {username}! your current ranking is {userRank} / {totalUsers}</Text>
-      <Button 
-        title="User Guide"
-        onPress={() => navigation.navigate('UserGuide')}
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.container}>
+        <Text style={styles.header}>Home</Text>
+        <Text style={styles.welcomeText}>
+          Welcome back <Text style={styles.username}>{username}</Text>!
+        </Text>
+        <Text style={styles.rankText}>
+          Your current ranking is <Text style={styles.rank}>{userRank}</Text> / <Text style={styles.rank}>{totalUsers}</Text>
+        </Text>
+        <TouchableOpacity style={styles.userGuideButton} onPress={() => navigation.navigate('UserGuide')}>
+          <Text style={styles.buttonText}>User Guide</Text>
+        </TouchableOpacity>
+        <View style={styles.cryptoSection}>
+          {cryptoPrices.btc && (
+            <View style={styles.cryptoBox}>
+              <Text style={styles.cryptoLabel}>Bitcoin (BTC)</Text>
+              <Text style={styles.cryptoValue}>${cryptoPrices.btc.toLocaleString()}</Text>
+            </View>
+          )}
+          {cryptoPrices.eth && (
+            <View style={styles.cryptoBox}>
+              <Text style={styles.cryptoLabel}>Ethereum (ETH)</Text>
+              <Text style={styles.cryptoValue}>${cryptoPrices.eth.toLocaleString()}</Text>
+            </View>
+          )}
+        </View>
+        <Text style={styles.newsHeader}>Current News:</Text>
+        <FlatList
+          data={news}
+          renderItem={renderNewsItem}
+          keyExtractor={item => item.id}
+          style={styles.newsList}
+          contentContainerStyle={styles.newsContainer}
         />
-      {cryptoPrices.btc && (
-        <Text style={styles.cryptoPrice}>Bitcoin (BTC): ${cryptoPrices.btc}</Text>
-      )}
-      {cryptoPrices.eth && (
-        <Text style={styles.cryptoPrice}>Ethereum (ETH): ${cryptoPrices.eth}</Text>
-      )}
-      <Text style={styles.header}>Current News:</Text>
-      <FlatList
-                data={news}
-                renderItem={renderNewsItem}
-                keyExtractor={item => item.id}
-                style={styles.newsList}
-      />
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
-export const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 16,
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    newsList: {
-        marginTop: 16,
-    },
-    newsItem: {
-        flexDirection: 'row',
-        marginBottom: 16,
-        alignItems: 'center',
-    },
-    newsImage: {
-        width: 100,
-        height: 100,
-        marginRight: 16,
-    },
-    newsTitle: {
-        fontSize: 16,
-        flexShrink: 1,
-    },
-    cryptoPrice: {
-        fontSize: 18,
-        marginTop: 10,
-    }
+const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 16,
+  },
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f2f5',
+    padding: 16,
+    borderRadius: 8,
+  },
+  header: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
+  },
+  welcomeText: {
+    fontSize: 18,
+    marginBottom: 8,
+    color: '#555',
+  },
+  username: {
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  rankText: {
+    fontSize: 18,
+    marginBottom: 20,
+    color: '#555',
+  },
+  rank: {
+    fontWeight: 'bold',
+    color: '#2e86de',
+  },
+  userGuideButton: {
+    backgroundColor: '#007bff',
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  cryptoSection: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    marginBottom: 20,
+  },
+  cryptoBox: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  cryptoLabel: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  cryptoValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2e86de',
+  },
+  newsHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#333',
+  },
+  newsList: {
+    width: '100%',
+  },
+  newsContainer: {
+    paddingBottom: 20,
+  },
+  newsCard: {
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  newsImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    marginRight: 16,
+  },
+  newsTitle: {
+    fontSize: 16,
+    flexShrink: 1,
+    color: '#333',
+  },
 });
 
 export default HomeScreen;

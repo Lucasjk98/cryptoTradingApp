@@ -33,6 +33,7 @@ const CryptoScreen = () => {
   const fetchAndCacheCryptoData = async () => {
     try {
       const data = await getCryptoData();
+      console.log('Fetched crypto data:', data);
       if (Array.isArray(data)) {
         await AsyncStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
       } else {
@@ -71,6 +72,7 @@ const CryptoScreen = () => {
     try {
       const storedData = await AsyncStorage.getItem(LOCAL_STORAGE_KEY);
       const cachedData = JSON.parse(storedData || '[]');
+      console.log('Cached crypto data:', cachedData);
 
       if (!Array.isArray(cachedData)) {
         console.error('Cached data is not an array:', cachedData);
@@ -91,6 +93,8 @@ const CryptoScreen = () => {
         const parsedHistoricalDataCache = JSON.parse(historicalDataCache || '{}');
         const dailyDataCache = await AsyncStorage.getItem(DAILY_DATA_KEY);
         const parsedDailyDataCache = JSON.parse(dailyDataCache || '{}');
+        console.log('Daily Data Cache:', parsedDailyDataCache);
+        console.log('Historical Data Cache:', parsedHistoricalDataCache);
 
         if (duration === '1D' && parsedDailyDataCache[cryptoInfo.id]) {
           processData(parsedDailyDataCache[cryptoInfo.id]);
@@ -142,6 +146,11 @@ const CryptoScreen = () => {
 
   const processData = (data) => {
     let prices = data.prices;
+    if (!prices || prices.length === 0) {
+    console.error('No prices data available:', data);
+    return;
+  }
+  
     let formattedData = [];
     let formattedLabels = [];
 
