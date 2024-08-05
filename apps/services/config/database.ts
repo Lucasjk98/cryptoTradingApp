@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 let isConnected = false;
 
 const MONGODB_URI = process.env.MONGODB_URI
@@ -12,7 +12,12 @@ export const connectToDatabase = async () => {
     return;
   }
 
-  console.log('Using new database connection');
-  const db = await mongoose.connect(MONGODB_URI);
-  isConnected = Boolean(db.connections[0].readyState);
+  try {
+    const db = await mongoose.connect(MONGODB_URI);
+    isConnected = db.connections[0].readyState === 1;
+    console.log('Using new database connection');
+  } catch (error) {
+    console.error('Database connection failed', error);
+    throw new Error('Database connection failed');
+  }
 };
